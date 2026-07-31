@@ -1,0 +1,100 @@
+{% extends "base.html" %}
+{% block title %}New User{% endblock %}
+{% block content %}
+<h4 class="mb-3">Create New User</h4>
+<div class="card" style="max-width:560px;">
+  <div class="card-body">
+    <form method="POST">
+      <div class="mb-3">
+        <label class="form-label">Role</label>
+        <select name="role" id="roleSelect" class="form-select" onchange="toggleFields()" required>
+          <option value="student">Student</option>
+          <option value="teacher">Teacher</option>
+          <option value="parent">Parent</option>
+          <option value="admin">Admin</option>
+        </select>
+      </div>
+      <div class="row">
+        <div class="col-6 mb-3">
+          <label class="form-label">Username</label>
+          <input type="text" name="username" class="form-control" required>
+        </div>
+        <div class="col-6 mb-3">
+          <label class="form-label">Password</label>
+          <input type="text" name="password" class="form-control" placeholder="password123">
+        </div>
+      </div>
+      <div class="mb-3">
+        <label class="form-label">Full Name</label>
+        <input type="text" name="full_name" class="form-control" required>
+      </div>
+      <div class="row">
+        <div class="col-6 mb-3">
+          <label class="form-label">Email</label>
+          <input type="email" name="email" class="form-control">
+        </div>
+        <div class="col-6 mb-3">
+          <label class="form-label">Phone</label>
+          <input type="text" name="phone" class="form-control">
+        </div>
+      </div>
+
+      <div id="studentFields">
+        <hr><h6>Student Details</h6>
+        <div class="mb-3">
+          <label class="form-label">Registration No.</label>
+          <input type="text" name="registration_no" class="form-control">
+        </div>
+        <div class="row">
+          <div class="col-6 mb-3">
+            <label class="form-label">Department</label>
+            <select name="department_id" class="form-select">
+              {% for d in departments %}<option value="{{ d.department_id }}">{{ d.dept_name }}</option>{% endfor %}
+            </select>
+          </div>
+          <div class="col-6 mb-3">
+            <label class="form-label">Semester</label>
+            <input type="number" name="semester" class="form-control" min="1" max="8">
+          </div>
+        </div>
+        <div class="row">
+          <div class="col-6 mb-3">
+            <label class="form-label">Academic Year</label>
+            <input type="text" name="academic_year" class="form-control" placeholder="2026-2027">
+          </div>
+          <div class="col-6 mb-3">
+            <label class="form-label">Total Credits</label>
+            <input type="number" name="total_credits" class="form-control">
+          </div>
+        </div>
+      </div>
+
+      <div id="teacherFields" style="display:none;">
+        <hr><h6>Teacher Details</h6>
+        <div class="mb-3">
+          <label class="form-label">Department</label>
+          <select name="department_id" class="form-select">
+            {% for d in departments %}<option value="{{ d.department_id }}">{{ d.dept_name }}</option>{% endfor %}
+          </select>
+        </div>
+        <div class="mb-3">
+          <label class="form-label">Designation</label>
+          <input type="text" name="designation" class="form-control" placeholder="Assistant Professor">
+        </div>
+      </div>
+
+      <button type="submit" class="btn btn-primary">Create User</button>
+    </form>
+  </div>
+</div>
+{% endblock %}
+{% block scripts %}
+<script>
+function toggleFields() {
+  const role = document.getElementById('roleSelect').value;
+  document.getElementById('studentFields').style.display = role === 'student' ? 'block' : 'none';
+  document.getElementById('teacherFields').style.display = role === 'teacher' ? 'block' : 'none';
+}
+toggleFields();
+</script>
+{% endblock %}

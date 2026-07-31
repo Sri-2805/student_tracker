@@ -1,0 +1,116 @@
+{% extends "base.html" %}
+{% block title %}Dashboard{% endblock %}
+{% block content %}
+
+<div class="info-card">
+  <div class="d-flex justify-content-between flex-wrap">
+    <h3 class="mb-1">{{ student.user.full_name.upper() if student else 'STUDENT' }}</h3>
+    <div>
+      <span class="badge text-bg-light border">🎓 Semester {{ student.semester }}</span>
+      <span class="badge text-bg-light border">{{ student.program }}</span>
+    </div>
+  </div>
+  <p class="mb-1">🆔 Registration No.: <strong>{{ student.registration_no }}</strong></p>
+  <p class="mb-1">🏢 Department: <strong>{{ student.department.dept_name if student.department else '-' }}</strong></p>
+  <div class="d-flex gap-4 mt-2 flex-wrap">
+    <span>📅 Academic Year: <strong>{{ student.academic_year }}</strong></span>
+    <span>🎯 Total Credits: <strong>{{ student.total_credits }}</strong></span>
+    <span>🏆 Earned Credits: <strong>{{ student.earned_credits or 'NA' }}</strong></span>
+  </div>
+</div>
+
+<div class="row g-3 mb-4">
+  <div class="col-md-3">
+    <div class="stat-card">
+      <p>Enrolled Courses</p>
+      <h3>{{ courses|length }}</h3>
+    </div>
+  </div>
+  <div class="col-md-3">
+    <div class="stat-card">
+      <p>Avg Attendance</p>
+      {% set avg_att = (attendance_summary|sum(attribute='percent') / attendance_summary|length) if attendance_summary else 0 %}
+      <h3>{{ "%.1f"|format(avg_att) }}%</h3>
+    </div>
+  </div>
+  <div class="col-md-3">
+    <div class="stat-card">
+      <p>Avg Grade</p>
+      {% set avg_grade = (grade_summary|sum(attribute='final_percent') / grade_summary|length) if grade_summary else 0 %}
+      <h3>{{ "%.1f"|format(avg_grade) }}%</h3>
+    </div>
+  </div>
+  <div class="col-md-3">
+    <div class="stat-card">
+      <p>Pending Tasks</p>
+      <h3>{{ upcoming_tasks|length }}</h3>
+    </div>
+  </div>
+</div>
+
+<div class="row g-3">
+  <div class="col-lg-8">
+    <div class="card">
+      <div class="card-header bg-white fw-semibold">Your Courses — Attendance & Grade Snapshot</div>
+      <div class="table-responsive">
+        <table class="table mb-0">
+          <thead><tr><th>Course</th><th>Attendance</th><th>Grade</th><th></th></tr></thead>
+          <tbody>
+          {% for a in attendance_summary %}
+            {% set grade_row = grade_summary|selectattr('course_id', 'equalto', a.course_id)|first %}
+            <tr>
+              <td>{{ a.course_code }} — {{ a.course_name }}</td>
+              <td>
+                <span class="progress-pill {{ 'pill-good' if a.percent >= 75 else 'pill-bad' }}">{{ a.percent }}%</span>
+              </td>
+              <td>
+                {% if grade_row %}
+                  <span class="progress-pill {{ 'pill-good' if grade_row.final_percent >= 50 else 'pill-bad' }}">{{ grade_row.final_percent }}%</span>
+                {% else %}
+                  <span class="text-muted">No grades yet</span>
+                {% endif %}
+              </td>
+              <td>
+                <a href="{{ url_for('attendance.view', student_id=student.student_id, course_id=a.course_id) }}" class="btn btn-sm btn-outline-primary">Details</a>
+              </td>
+            </tr>
+          {% else %}
+            <tr><td colspan="4" class="text-muted">No attendance records yet.</td></tr>
+          {% endfor %}
+          </tbody>
+        </table>
+      </div>
+    </div>
+  </div>
+
+  <div class="col-lg-4">
+    <div class="card mb-3">
+      <div class="card-header bg-white fw-semibold">Deadline Tracker</div>
+      <ul class="list-group list-group-flush">
+        {% for t in upcoming_tasks %}
+        <li class="list-group-item d-flex justify-content-between">
+          <span>{{ t.title }}</span>
+          <small class="text-muted">{{ t.due_date }}</small>
+        </li>
+        {% else %}
+        <li class="list-group-item text-muted">No upcoming tasks 🎉</li>
+        {% endfor %}
+      </ul>
+    </div>
+
+    <div class="card">
+      <div class="card-header bg-white fw-semibold">Announcements</div>
+      <ul class="list-group list-group-flush">
+        {% for ann in announcements %}
+        <li class="list-group-item">
+          <strong>{{ ann.title }}</strong>
+          <div class="text-muted small">{{ ann.message }}</div>
+        </li>
+        {% else %}
+        <li class="list-group-item text-muted">No announcements.</li>
+        {% endfor %}
+      </ul>
+    </div>
+  </div>
+</div>
+{% endblock %}

@@ -1,0 +1,41 @@
+{% extends "base.html" %}
+{% block title %}Admin Dashboard{% endblock %}
+{% block content %}
+<div class="row g-3 mb-4">
+  <div class="col-md-4">
+    <div class="stat-card"><p>Total Students</p><h3>{{ total_students }}</h3></div>
+  </div>
+  <div class="col-md-4">
+    <div class="stat-card"><p>Total Courses</p><h3>{{ total_courses }}</h3></div>
+  </div>
+  <div class="col-md-4">
+    <div class="stat-card"><p>Quick Links</p>
+      <a href="{{ url_for('admin.new_user') }}" class="btn btn-sm btn-primary me-1 mt-1">+ New User</a>
+      <a href="{{ url_for('admin.courses') }}" class="btn btn-sm btn-outline-primary mt-1">Manage Courses</a>
+    </div>
+  </div>
+</div>
+
+<div class="card">
+  <div class="card-header bg-white fw-semibold d-flex justify-content-between">
+    Recent Announcements
+    <a href="{{ url_for('admin.announcements') }}" class="btn btn-sm btn-primary">Post New</a>
+  </div>
+  <ul class="list-group list-group-flush">
+    {% for ann in recent_announcements %}
+    <li class="list-group-item">
+      <strong>{{ ann.title }}</strong>
+      <div class="text-muted small">{{ ann.message }}</div>
+    </li>
+    {% else %}
+    <li class="list-group-item text-muted">No announcements yet.</li>
+    {% endfor %}
+  </ul>
+</div>
+
+<div class="card mt-3">
+  <div class="card-header bg-white fw-semibold">
+    <a href="{{ url_for('analytics.overview') }}">View Institution-wide Performance Analytics →</a>
+  </div>
+</div>
+{% endblock %}

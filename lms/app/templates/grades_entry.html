@@ -1,0 +1,63 @@
+{% extends "base.html" %}
+{% block title %}Grade Entry{% endblock %}
+{% block content %}
+<h4 class="mb-3">Grade Entry</h4>
+
+<form method="GET" class="row g-2 mb-3">
+  <div class="col-md-5">
+    <select name="course_id" class="form-select" onchange="this.form.submit()">
+      <option value="">-- Select Course --</option>
+      {% for c in courses %}
+        <option value="{{ c.course_id }}" {{ 'selected' if c.course_id == selected_course_id }}>{{ c.course_code }} — {{ c.course_name }}</option>
+      {% endfor %}
+    </select>
+  </div>
+  {% if assessments %}
+  <div class="col-md-5">
+    <select name="assessment_id" class="form-select" onchange="this.form.submit()">
+      <option value="">-- Select Assessment --</option>
+      {% for a in assessments %}
+        <option value="{{ a.assessment_id }}" {{ 'selected' if assessment and a.assessment_id == assessment.assessment_id }}>{{ a.title }} ({{ a.assessment_type }}, {{ a.max_marks }} marks)</option>
+      {% endfor %}
+    </select>
+  </div>
+  {% endif %}
+  <div class="col-md-2">
+    <a href="{{ url_for('grades.new_assessment') }}" class="btn btn-outline-primary w-100">+ New Assessment</a>
+  </div>
+</form>
+
+{% if roster %}
+<form method="POST">
+  <input type="hidden" name="assessment_id" value="{{ assessment.assessment_id }}">
+  <div class="card">
+    <div class="card-header bg-white">
+      <strong>{{ assessment.title }}</strong> — Max Marks: {{ assessment.max_marks }} | Weight: {{ assessment.weight_percent }}%
+    </div>
+    <div class="table-responsive">
+      <table class="table mb-0">
+        <thead><tr><th>Reg. No.</th><th>Student</th><th>Marks Obtained</th><th>Current Grade</th></tr></thead>
+        <tbody>
+        {% for row in roster %}
+          <tr>
+            <input type="hidden" name="student_id" value="{{ row.student.student_id }}">
+            <td>{{ row.student.registration_no }}</td>
+            <td>{{ row.student.user.full_name }}</td>
+            <td style="max-width:140px">
+              <input type="number" step="0.01" min="0" max="{{ assessment.max_marks }}"
+                     name="marks_{{ row.student.student_id }}" class="form-control form-control-sm"
+                     value="{{ row.grade.marks_obtained if row.grade else '' }}">
+            </td>
+            <td>{{ row.grade.grade_letter if row.grade else '-' }}</td>
+          </tr>
+        {% endfor %}
+        </tbody>
+      </table>
+    </div>
+  </div>
+  <button type="submit" class="btn btn-primary mt-3"><i class="bi bi-save"></i> Save Grades</button>
+</form>
+{% elif assessment %}
+  <p class="text-muted">No students enrolled in this course.</p>
+{% endif %}
+{% endblock %}

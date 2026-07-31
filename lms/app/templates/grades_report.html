@@ -1,0 +1,36 @@
+{% extends "base.html" %}
+{% block title %}Grade Report{% endblock %}
+{% block content %}
+<h4 class="mb-3 d-flex justify-content-between">
+  Grade Report — {{ student.user.full_name }} ({{ student.registration_no }})
+  <a href="{{ url_for('grades.download_report', student_id=student.student_id) }}" class="btn btn-sm btn-primary">
+    <i class="bi bi-download"></i> Download (CSV)
+  </a>
+</h4>
+
+{% for course in summary %}
+<div class="card mb-3">
+  <div class="card-header bg-white d-flex justify-content-between">
+    <span class="fw-semibold">{{ course.course_code }} — {{ course.course_name }}</span>
+    <span class="progress-pill {{ 'pill-good' if course.final_percent >= 50 else 'pill-bad' }}">Final: {{ course.final_percent }}%</span>
+  </div>
+  <div class="table-responsive">
+    <table class="table mb-0">
+      <thead><tr><th>Assessment</th><th>Type</th><th>Marks Obtained</th><th>Max Marks</th></tr></thead>
+      <tbody>
+      {% for a in course.assessments %}
+        <tr>
+          <td>{{ a.title }}</td>
+          <td>{{ a.type }}</td>
+          <td>{{ a.marks_obtained if a.marks_obtained is not none else '-' }}</td>
+          <td>{{ a.max_marks }}</td>
+        </tr>
+      {% endfor %}
+      </tbody>
+    </table>
+  </div>
+</div>
+{% else %}
+<div class="alert alert-info">No grades recorded yet.</div>
+{% endfor %}
+{% endblock %}

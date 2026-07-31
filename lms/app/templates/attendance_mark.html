@@ -1,0 +1,52 @@
+{% extends "base.html" %}
+{% block title %}Mark Attendance{% endblock %}
+{% block content %}
+<h4 class="mb-3">Mark Attendance</h4>
+
+<form method="GET" class="row g-2 mb-4">
+  <div class="col-md-5">
+    <select name="course_id" class="form-select" onchange="this.form.submit()">
+      <option value="">-- Select Course --</option>
+      {% for c in courses %}
+        <option value="{{ c.course_id }}" {{ 'selected' if c.course_id == selected_course_id }}>{{ c.course_code }} — {{ c.course_name }}</option>
+      {% endfor %}
+    </select>
+  </div>
+  <div class="col-md-3">
+    <input type="date" name="attendance_date" value="{{ selected_date }}" class="form-control" onchange="this.form.submit()">
+  </div>
+</form>
+
+{% if roster %}
+<form method="POST">
+  <input type="hidden" name="course_id" value="{{ selected_course_id }}">
+  <input type="hidden" name="attendance_date" value="{{ selected_date }}">
+  <div class="card">
+    <div class="table-responsive">
+      <table class="table mb-0">
+        <thead><tr><th>Reg. No.</th><th>Student Name</th><th>Status</th></tr></thead>
+        <tbody>
+        {% for row in roster %}
+          <tr>
+            <input type="hidden" name="student_id" value="{{ row.student.student_id }}">
+            <td>{{ row.student.registration_no }}</td>
+            <td>{{ row.student.user.full_name }}</td>
+            <td>
+              <select name="status_{{ row.student.student_id }}" class="form-select form-select-sm" style="max-width:160px">
+                {% for opt in ['Present','Absent','Late','Excused'] %}
+                  <option value="{{ opt }}" {{ 'selected' if row.current_status == opt }}>{{ opt }}</option>
+                {% endfor %}
+              </select>
+            </td>
+          </tr>
+        {% endfor %}
+        </tbody>
+      </table>
+    </div>
+  </div>
+  <button type="submit" class="btn btn-primary mt-3"><i class="bi bi-save"></i> Save Attendance</button>
+</form>
+{% elif selected_course_id %}
+  <p class="text-muted">No students enrolled in this course.</p>
+{% endif %}
+{% endblock %}

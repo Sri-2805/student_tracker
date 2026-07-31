@@ -1,0 +1,52 @@
+{% extends "base.html" %}
+{% block title %}Admin Portal{% endblock %}
+{% block content %}
+<div class="row g-3 mb-4">
+  <div class="col-md-3">
+    <div class="stat-card"><p>Total Students</p><h3>{{ total_students }}</h3></div>
+  </div>
+  <div class="col-md-3">
+    <div class="stat-card"><p>Total Teachers</p><h3>{{ total_teachers }}</h3></div>
+  </div>
+  <div class="col-md-3">
+    <div class="stat-card"><p>Total Courses</p><h3>{{ total_courses }}</h3></div>
+  </div>
+  <div class="col-md-3">
+    <div class="stat-card"><p>Announcements</p><h3>{{ total_announcements }}</h3></div>
+  </div>
+</div>
+
+<div class="row">
+  <div class="col-md-6">
+    <div class="card mb-3">
+      <div class="card-header">Users</div>
+      <div class="card-body">
+        <p>Manage users, reset passwords, and register new accounts.</p>
+        <a href="{{ url_for('admin.users') }}" class="btn btn-primary">Manage Users</a>
+        <a href="{{ url_for('admin.new_user') }}" class="btn btn-outline-primary ms-2">Create User</a>
+      </div>
+    </div>
+  </div>
+  <div class="col-md-6">
+    <div class="card mb-3">
+      <div class="card-header">Courses</div>
+      <div class="card-body">
+        <p>Manage course catalog and teacher assignments.</p>
+        <a href="{{ url_for('admin.courses') }}" class="btn btn-primary">Manage Courses</a>
+      </div>
+    </div>
+  </div>
+</div>
+
+<div class="row">
+  <div class="col-md-12">
+    <div class="card">
+      <div class="card-header">Announcements</div>
+      <div class="card-body">
+        <p>Publish announcements to students, parents, or teachers.</p>
+        <a href="{{ url_for('admin.announcements') }}" class="btn btn-primary">Post Announcement</a>
+      </div>
+    </div>
+  </div>
+</div>
+{% endblock %}

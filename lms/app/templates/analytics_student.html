@@ -1,0 +1,41 @@
+{% extends "base.html" %}
+{% block title %}Performance Analytics{% endblock %}
+{% block content %}
+<h4 class="mb-3">Performance Analytics — {{ student.user.full_name }}</h4>
+
+<div class="row g-3 mb-4">
+  <div class="col-md-6">
+    <div class="card">
+      <div class="card-header bg-white fw-semibold">Attendance by Course</div>
+      <div class="card-body"><canvas id="attendanceChart" height="220"></canvas></div>
+    </div>
+  </div>
+  <div class="col-md-6">
+    <div class="card">
+      <div class="card-header bg-white fw-semibold">Grade Performance by Course</div>
+      <div class="card-body"><canvas id="gradeChart" height="220"></canvas></div>
+    </div>
+  </div>
+</div>
+
+{% endblock %}
+{% block scripts %}
+<script>
+const attendanceLabels = {{ attendance|map(attribute='course_code')|list|tojson }};
+const attendanceData = {{ attendance|map(attribute='percent')|list|tojson }};
+const gradeLabels = {{ grades|map(attribute='course_code')|list|tojson }};
+const gradeData = {{ grades|map(attribute='final_percent')|list|tojson }};
+
+new Chart(document.getElementById('attendanceChart'), {
+  type: 'bar',
+  data: { labels: attendanceLabels, datasets: [{ label: 'Attendance %', data: attendanceData, backgroundColor: '#2563eb' }] },
+  options: { scales: { y: { beginAtZero: true, max: 100 } } }
+});
+
+new Chart(document.getElementById('gradeChart'), {
+  type: 'bar',
+  data: { labels: gradeLabels, datasets: [{ label: 'Final Grade %', data: gradeData, backgroundColor: '#16a34a' }] },
+  options: { scales: { y: { beginAtZero: true, max: 100 } } }
+});
+</script>
+{% endblock %}

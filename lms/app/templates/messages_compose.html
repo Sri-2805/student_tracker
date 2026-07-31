@@ -1,0 +1,39 @@
+{% extends "base.html" %}
+{% block title %}Compose Message{% endblock %}
+{% block content %}
+<h4 class="mb-3">Compose Message</h4>
+<div class="card" style="max-width:560px;">
+  <div class="card-body">
+    <form method="POST">
+      <div class="mb-3">
+        <label class="form-label">To</label>
+        <select name="receiver_id" class="form-select" required>
+          {% for r in recipients %}
+            <option value="{{ r.user_id }}">{{ r.full_name }} ({{ r.role }})</option>
+          {% endfor %}
+        </select>
+      </div>
+      {% if children %}
+      <div class="mb-3">
+        <label class="form-label">Regarding Child (optional)</label>
+        <select name="student_id" class="form-select">
+          <option value="">-- None --</option>
+          {% for c in children %}
+            <option value="{{ c.student_id }}">{{ c.user.full_name }}</option>
+          {% endfor %}
+        </select>
+      </div>
+      {% endif %}
+      <div class="mb-3">
+        <label class="form-label">Subject</label>
+        <input type="text" name="subject" class="form-control" required>
+      </div>
+      <div class="mb-3">
+        <label class="form-label">Message</label>
+        <textarea name="body" class="form-control" rows="5" required></textarea>
+      </div>
+      <button type="submit" class="btn btn-primary"><i class="bi bi-send"></i> Send</button>
+    </form>
+  </div>
+</div>
+{% endblock %}

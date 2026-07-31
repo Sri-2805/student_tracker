@@ -1,0 +1,41 @@
+{% extends "base.html" %}
+{% block title %}Parent Dashboard{% endblock %}
+{% block content %}
+<div class="info-card">
+  <h3 class="mb-0">Welcome, {{ current_user.full_name }}</h3>
+  <p class="text-muted mb-0">You have {{ unread_messages }} unread message(s) from teachers.</p>
+</div>
+
+{% for cd in child_data %}
+<div class="card mb-3">
+  <div class="card-header bg-white d-flex justify-content-between align-items-center">
+    <span class="fw-semibold">{{ cd.student.user.full_name }} — {{ cd.student.registration_no }}</span>
+    <div>
+      <a href="{{ url_for('attendance.view', student_id=cd.student.student_id) }}" class="btn btn-sm btn-outline-primary">Attendance</a>
+      <a href="{{ url_for('grades.report', student_id=cd.student.student_id) }}" class="btn btn-sm btn-outline-primary">Grades</a>
+      <a href="{{ url_for('analytics.student_analytics', student_id=cd.student.student_id) }}" class="btn btn-sm btn-outline-primary">Analytics</a>
+      <a href="{{ url_for('parents.compose') }}" class="btn btn-sm btn-primary">Message Teacher</a>
+    </div>
+  </div>
+  <div class="table-responsive">
+    <table class="table mb-0">
+      <thead><tr><th>Course</th><th>Attendance</th><th>Grade</th></tr></thead>
+      <tbody>
+      {% for a in cd.attendance %}
+        {% set grade_row = cd.grades|selectattr('course_id', 'equalto', a.course_id)|first %}
+        <tr>
+          <td>{{ a.course_code }} — {{ a.course_name }}</td>
+          <td><span class="progress-pill {{ 'pill-good' if a.percent >= 75 else 'pill-bad' }}">{{ a.percent }}%</span></td>
+          <td>{% if grade_row %}<span class="progress-pill {{ 'pill-good' if grade_row.final_percent >= 50 else 'pill-bad' }}">{{ grade_row.final_percent }}%</span>{% else %}<span class="text-muted">-</span>{% endif %}</td>
+        </tr>
+      {% else %}
+        <tr><td colspan="3" class="text-muted">No records yet.</td></tr>
+      {% endfor %}
+      </tbody>
+    </table>
+  </div>
+</div>
+{% else %}
+<div class="alert alert-info">No children linked to your account yet. Please contact the administrator.</div>
+{% endfor %}
+{% endblock %}

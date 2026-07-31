@@ -1,0 +1,17 @@
+{% extends "base.html" %}
+{% block title %}{{ msg.subject }}{% endblock %}
+{% block content %}
+<h4 class="mb-3">{{ msg.subject }}</h4>
+<div class="card" style="max-width:640px;">
+  <div class="card-body">
+    <p class="text-muted mb-1">
+      From <strong>{{ msg.sender.full_name }}</strong> to <strong>{{ msg.receiver.full_name }}</strong>
+      {% if msg.student %} — regarding {{ msg.student.user.full_name }}{% endif %}
+    </p>
+    <p class="text-muted small">{{ msg.sent_at.strftime('%d %b %Y, %I:%M %p') }}</p>
+    <hr>
+    <p style="white-space: pre-wrap;">{{ msg.body }}</p>
+  </div>
+</div>
+<a href="{{ url_for('parents.inbox') }}" class="btn btn-sm btn-outline-secondary mt-3">← Back to Inbox</a>
+{% endblock %}

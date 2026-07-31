@@ -1,0 +1,57 @@
+{% extends "base.html" %}
+{% block title %}Attendance Tracking{% endblock %}
+{% block content %}
+<h4 class="mb-3">Attendance — {{ student.user.full_name }} ({{ student.registration_no }})</h4>
+
+<div class="card mb-4">
+  <div class="card-header bg-white fw-semibold d-flex justify-content-between">
+    Course-wise Attendance Summary
+    <a href="{{ url_for('attendance.download', student_id=student.student_id) }}" class="btn btn-sm btn-primary">
+      <i class="bi bi-download"></i> Download Full Report (CSV)
+    </a>
+  </div>
+  <div class="table-responsive">
+    <table class="table mb-0">
+      <thead><tr><th>Course</th><th>Total Classes</th><th>Attended</th><th>Percentage</th><th></th></tr></thead>
+      <tbody>
+      {% for s in summary %}
+        <tr>
+          <td>{{ s.course_code }} — {{ s.course_name }}</td>
+          <td>{{ s.total_classes }}</td>
+          <td>{{ s.attended }}</td>
+          <td><span class="progress-pill {{ 'pill-good' if s.percent >= 75 else ('pill-warn' if s.percent >= 60 else 'pill-bad') }}">{{ s.percent }}%</span></td>
+          <td>
+            <a href="{{ url_for('attendance.view', student_id=student.student_id, course_id=s.course_id) }}" class="btn btn-sm btn-outline-primary">View Log</a>
+            <a href="{{ url_for('attendance.download', student_id=student.student_id, course_id=s.course_id) }}" class="btn btn-sm btn-outline-secondary">CSV</a>
+          </td>
+        </tr>
+      {% else %}
+        <tr><td colspan="5" class="text-muted">No attendance data yet.</td></tr>
+      {% endfor %}
+      </tbody>
+    </table>
+  </div>
+</div>
+
+{% if selected_course_id %}
+<div class="card">
+  <div class="card-header bg-white fw-semibold">Daily Log</div>
+  <div class="table-responsive">
+    <table class="table mb-0">
+      <thead><tr><th>Date</th><th>Status</th><th>Remarks</th></tr></thead>
+      <tbody>
+      {% for r in records %}
+        <tr>
+          <td>{{ r.attendance_date }}</td>
+          <td><span class="progress-pill {{ 'pill-good' if r.status in ['Present','Late'] else 'pill-bad' }}">{{ r.status }}</span></td>
+          <td>{{ r.remarks or '-' }}</td>
+        </tr>
+      {% else %}
+        <tr><td colspan="3" class="text-muted">No records.</td></tr>
+      {% endfor %}
+      </tbody>
+    </table>
+  </div>
+</div>
+{% endif %}
+{% endblock %}

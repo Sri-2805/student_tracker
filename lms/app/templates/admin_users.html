@@ -1,0 +1,26 @@
+{% extends "base.html" %}
+{% block title %}Manage Users{% endblock %}
+{% block content %}
+<h4 class="mb-3 d-flex justify-content-between">
+  Manage Users
+  <a href="{{ url_for('admin.new_user') }}" class="btn btn-sm btn-primary">+ New User</a>
+</h4>
+<div class="card">
+  <div class="table-responsive">
+    <table class="table mb-0">
+      <thead><tr><th>Username</th><th>Full Name</th><th>Role</th><th>Email</th><th>Phone</th></tr></thead>
+      <tbody>
+      {% for u in users %}
+        <tr>
+          <td>{{ u.username }}</td>
+          <td>{{ u.full_name }}</td>
+          <td><span class="badge text-bg-light border">{{ u.role }}</span></td>
+          <td>{{ u.email or '-' }}</td>
+          <td>{{ u.phone or '-' }}</td>
+        </tr>
+      {% endfor %}
+      </tbody>
+    </table>
+  </div>
+</div>
+{% endblock %}

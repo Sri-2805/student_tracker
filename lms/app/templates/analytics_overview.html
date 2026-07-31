@@ -1,0 +1,36 @@
+{% extends "base.html" %}
+{% block title %}Analytics Overview{% endblock %}
+{% block content %}
+<h4 class="mb-3">Performance Analytics Overview</h4>
+
+<div class="row g-3 mb-4">
+  <div class="col-md-4"><div class="stat-card"><p>Total Students</p><h3>{{ total_students }}</h3></div></div>
+  <div class="col-md-4"><div class="stat-card"><p>Total Courses</p><h3>{{ total_courses }}</h3></div></div>
+  <div class="col-md-4"><div class="stat-card"><p>At-Risk Students</p><h3 class="text-danger">{{ at_risk|length }}</h3></div></div>
+</div>
+
+<div class="card">
+  <div class="card-header bg-white fw-semibold">At-Risk Students (Attendance &lt; 75% or Grade &lt; 50%)</div>
+  <div class="table-responsive">
+    <table class="table mb-0">
+      <thead><tr><th>Reg. No.</th><th>Name</th><th>Avg Attendance</th><th>Avg Grade</th><th></th></tr></thead>
+      <tbody>
+      {% for item in at_risk %}
+        <tr>
+          <td>{{ item.student.registration_no }}</td>
+          <td>{{ item.student.user.full_name }}</td>
+          <td><span class="progress-pill {{ 'pill-good' if item.avg_attendance >= 75 else 'pill-bad' }}">{{ item.avg_attendance }}%</span></td>
+          <td><span class="progress-pill {{ 'pill-good' if item.avg_grade >= 50 else 'pill-bad' }}">{{ item.avg_grade }}%</span></td>
+          <td>
+            <a href="{{ url_for('analytics.student_analytics', student_id=item.student.student_id) }}" class="btn btn-sm btn-outline-primary">View</a>
+            <a href="{{ url_for('parents.compose') }}" class="btn btn-sm btn-outline-secondary">Notify Parent</a>
+          </td>
+        </tr>
+      {% else %}
+        <tr><td colspan="5" class="text-muted">No at-risk students 🎉</td></tr>
+      {% endfor %}
+      </tbody>
+    </table>
+  </div>
+</div>
+{% endblock %}

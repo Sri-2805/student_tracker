@@ -1,0 +1,31 @@
+{% extends "base.html" %}
+{% block title %}Messages{% endblock %}
+{% block content %}
+<h4 class="mb-3 d-flex justify-content-between">
+  Messages
+  <a href="{{ url_for('parents.compose') }}" class="btn btn-sm btn-primary"><i class="bi bi-pencil"></i> Compose</a>
+</h4>
+
+<div class="card">
+  <ul class="list-group list-group-flush">
+    {% for m in messages %}
+      <a href="{{ url_for('parents.thread', message_id=m.message_id) }}" class="list-group-item list-group-item-action">
+        <div class="d-flex justify-content-between">
+          <strong>{{ m.subject }}</strong>
+          <small class="text-muted">{{ m.sent_at.strftime('%d %b %Y, %I:%M %p') }}</small>
+        </div>
+        <div class="text-muted small">
+          {% if m.sender_id == current_user.user_id %}
+            To: {{ m.receiver.full_name }}
+          {% else %}
+            From: {{ m.sender.full_name }} {% if not m.is_read %}<span class="badge bg-primary">New</span>{% endif %}
+          {% endif %}
+          {% if m.student %} — regarding {{ m.student.user.full_name }}{% endif %}
+        </div>
+      </a>
+    {% else %}
+      <li class="list-group-item text-muted">No messages yet.</li>
+    {% endfor %}
+  </ul>
+</div>
+{% endblock %}

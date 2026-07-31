@@ -1,0 +1,33 @@
+{% extends "base.html" %}
+{% block title %}Login - Student LMS Tracker{% endblock %}
+{% block auth_content %}
+<div class="auth-wrapper">
+  <div class="auth-card">
+    <h2>Student LMS Tracker</h2>
+    <p class="subtitle">Sign in to your account</p>
+
+    {% with messages = get_flashed_messages(with_categories=true) %}
+      {% if messages %}
+        {% for category, message in messages %}
+          <div class="alert alert-{{ category }}">{{ message }}</div>
+        {% endfor %}
+      {% endif %}
+    {% endwith %}
+
+    <form method="POST">
+      <div class="mb-3">
+        <label class="form-label">Username</label>
+        <input type="text" name="username" class="form-control" required autofocus>
+      </div>
+      <div class="mb-3">
+        <label class="form-label">Password</label>
+        <input type="password" name="password" class="form-control" required>
+      </div>
+      <button type="submit" class="btn btn-primary w-100">Login</button>
+    </form>
+    <p class="text-muted mt-3" style="font-size:.8rem;">
+      Demo accounts (password: <code>password123</code>): admin1, t.suresh, t.anitha, sri.vatsa, p.ganesh
+    </p>
+  </div>
+</div>
+{% endblock %}
