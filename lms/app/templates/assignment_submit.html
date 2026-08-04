@@ -1,0 +1,28 @@
+{% extends 'base.html' %}
+{% block title %}Submit Assignment{% endblock %}
+{% block content %}
+<div class="card">
+  <div class="card-body">
+    <h5 class="card-title">Submit Assignment</h5>
+    <form method="post" enctype="multipart/form-data">
+      <div class="mb-3">
+        <label for="assessment_id" class="form-label">Assignment</label>
+        <select id="assessment_id" name="assessment_id" class="form-select">
+          {% for a in assessments %}
+            <option value="{{ a.assessment_id }}" {% if assessment and assessment.assessment_id==a.assessment_id %}selected{% endif %}>{{ a.title }} - {{ a.course.course_code }}</option>
+          {% endfor %}
+        </select>
+      </div>
+      <div class="mb-3">
+        <label for="file" class="form-label">File (optional)</label>
+        <input type="file" name="file" id="file" class="form-control" />
+      </div>
+      <div class="mb-3">
+        <label for="comment" class="form-label">Comment</label>
+        <input type="text" name="comment" id="comment" class="form-control" />
+      </div>
+      <button class="btn btn-primary">Submit</button>
+    </form>
+  </div>
+</div>
+{% endblock %}

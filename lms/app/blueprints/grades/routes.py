@@ -11,6 +11,10 @@ from app.extensions import db
 from app.models import Course, Assessment, Grade, Enrollment, Student, Teacher, Notification
 from app.utils.decorators import roles_required
 from app.blueprints.analytics.services import get_grade_summary_for_student
+from flask import current_app
+import os
+from werkzeug.utils import secure_filename
+from app.models import AssignmentSubmission
 
 grades_bp = Blueprint("grades", __name__)
 
@@ -176,3 +180,77 @@ def download_report(student_id):
         mimetype="text/csv",
         headers={"Content-Disposition": f"attachment; filename={filename}"},
     )
+
+
+# ---------------------------------------------------------------------------
+# STUDENT: Submit assignment (Assessment of type 'Assignment')
+# ---------------------------------------------------------------------------
+@grades_bp.route('/assignments/submit', methods=['GET', 'POST'])
+@login_required
+@roles_required('student')
+def submit_assignment():
+    assessment_id = request.values.get('assessment_id', type=int)
+    assessment = Assessment.query.get_or_404(assessment_id) if assessment_id else None
+    student = Student.query.filter_by(user_id=current_user.user_id).first()
+
+    if request.method == 'POST':
+        assessment_id = request.form.get('assessment_id', type=int)
+        comment = request.form.get('comment')
+        file = request.files.get('file')
+
+        sub_folder = os.path.join(current_app.root_path, 'static', 'uploads', 'assignments')
+        os.makedirs(sub_folder, exist_ok=True)
+        file_path = None
+        if file and file.filename:
+            filename = secure_filename(file.filename)
+            filename = f"assess_{assessment_id}_stu_{student.student_id}_{filename}"
+            dest = os.path.join(sub_folder, filename)
+            file.save(dest)
+            # store relative path from static
+            file_path = os.path.join('static', 'uploads', 'assignments', filename)
+
+        submission = AssignmentSubmission(
+            assessment_id=assessment_id,
+            student_id=student.student_id,
+            file_path=file_path,
+            comment=comment,
+            status='Submitted',
+        )
+        db.session.add(submission)
+        db.session.commit()
+        flash('Assignment submitted successfully.', 'success')
+        return redirect(url_for('grades.entry', assessment_id=assessment_id))
+
+    # GET
+    # show student's enrollments and assessments
+    courses = Course.query.all()
+    assessments = Assessment.query.filter_by(assessment_type='Assignment').all()
+    return render_template('assignment_submit.html', assessment=assessment, assessments=assessments)
+
+
+# ---------------------------------------------------------------------------
+# TEACHER: View submissions for an assessment and grade them
+# ---------------------------------------------------------------------------
+@grades_bp.route('/assignments/<int:assessment_id>/submissions', methods=['GET', 'POST'])
+@login_required
+@roles_required('teacher', 'admin')
+def assignment_submissions(assessment_id):
+    assessment = Assessment.query.get_or_404(assessment_id)
+
+    submissions = AssignmentSubmission.query.filter_by(assessment_id=assessment_id).all()
+
+    if request.method == 'POST':
+        submission_id = request.form.get('submission_id', type=int)
+        marks = request.form.get('marks')
+        remarks = request.form.get('remarks')
+        sub = AssignmentSubmission.query.get_or_404(submission_id)
+        sub.marks_awarded = float(marks) if marks not in (None, '') else None
+        sub.status = 'Graded'
+        sub.graded_by = current_user.user_id
+        from datetime import datetime
+        sub.graded_at = datetime.utcnow()
+        db.session.commit()
+        flash('Submission graded.', 'success')
+        return redirect(url_for('grades.assignment_submissions', assessment_id=assessment_id))
+
+    return render_template('assignment_submissions.html', assessment=assessment, submissions=submissions)

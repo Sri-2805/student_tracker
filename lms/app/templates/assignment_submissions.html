@@ -1,0 +1,33 @@
+{% extends 'base.html' %}
+{% block title %}Submissions - {{ assessment.title }}{% endblock %}
+{% block content %}
+<div class="card">
+  <div class="card-body">
+    <h5 class="card-title">Submissions for {{ assessment.title }}</h5>
+    <table class="table">
+      <thead><tr><th>Student</th><th>Submitted At</th><th>File</th><th>Comment</th><th>Marks</th><th>Action</th></tr></thead>
+      <tbody>
+        {% for s in submissions %}
+          <tr>
+            <td>{{ s.student.user.full_name }}</td>
+            <td>{{ s.submitted_at }}</td>
+            <td>{% if s.file_path %}<a href="/{{ s.file_path }}" target="_blank">Download</a>{% else %}-{% endif %}</td>
+            <td>{{ s.comment or '-' }}</td>
+            <td>{{ s.marks_awarded or '-' }}</td>
+            <td>
+              <form method="post" class="d-flex gap-2">
+                <input type="hidden" name="submission_id" value="{{ s.submission_id }}" />
+                <input type="text" name="marks" placeholder="Marks" class="form-control form-control-sm" style="width:100px;" />
+                <input type="text" name="remarks" placeholder="Remarks" class="form-control form-control-sm" style="width:200px;" />
+                <button class="btn btn-sm btn-success">Grade</button>
+              </form>
+            </td>
+          </tr>
+        {% else %}
+          <tr><td colspan="6">No submissions yet.</td></tr>
+        {% endfor %}
+      </tbody>
+    </table>
+  </div>
+</div>
+{% endblock %}

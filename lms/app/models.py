@@ -210,3 +210,21 @@ class Task(db.Model):
     task_type = db.Column(db.Enum("Assignment", "Assessment", "Event", "Other"), default="Assignment")
     due_date = db.Column(db.Date, nullable=False)
     status = db.Column(db.Enum("Pending", "Submitted", "Completed", "Overdue"), default="Pending")
+
+
+class AssignmentSubmission(db.Model):
+    __tablename__ = "assignment_submissions"
+
+    submission_id = db.Column(db.Integer, primary_key=True)
+    assessment_id = db.Column(db.Integer, db.ForeignKey("assessments.assessment_id"), nullable=False)
+    student_id = db.Column(db.Integer, db.ForeignKey("students.student_id"), nullable=False)
+    file_path = db.Column(db.String(255))
+    comment = db.Column(db.String(255))
+    status = db.Column(db.Enum("Submitted", "Late", "Graded", "Missing"), default="Submitted")
+    marks_awarded = db.Column(db.Numeric(6, 2))
+    graded_by = db.Column(db.Integer, db.ForeignKey("users.user_id"))
+    graded_at = db.Column(db.DateTime)
+    submitted_at = db.Column(db.DateTime, default=datetime.utcnow)
+
+    assessment = db.relationship("Assessment")
+    student = db.relationship("Student")
