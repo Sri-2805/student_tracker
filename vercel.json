@@ -1,0 +1,22 @@
+{
+  "version": 2,
+  "builds": [
+    {
+      "src": "lms/run.py",
+      "use": "@vercel/python",
+      "config": {
+        "maxLambdaSize": "50mb"
+      }
+    }
+  ],
+  "routes": [
+    {
+      "src": "/(.*)",
+      "dest": "/lms/run.py"
+    }
+  ],
+  "env": {
+    "FLASK_ENV": "development",
+    "USE_SQLITE": "1"
+  }
+}
