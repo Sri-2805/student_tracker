@@ -99,7 +99,7 @@ def view(student_id):
     # Access control: students see only themselves, parents only their children
     if current_user.role == "student" and student.user_id != current_user.user_id:
         abort(403)
-    if current_user.role == "parent" and student.parent_id != current_user.user_id:
+    if current_user.role == "parent" and not student.has_parent(current_user.user_id):
         abort(403)
 
     summary = get_attendance_summary_for_student(student_id)
@@ -132,7 +132,7 @@ def download(student_id):
 
     if current_user.role == "student" and student.user_id != current_user.user_id:
         abort(403)
-    if current_user.role == "parent" and student.parent_id != current_user.user_id:
+    if current_user.role == "parent" and not student.has_parent(current_user.user_id):
         abort(403)
 
     course_id = request.args.get("course_id", type=int)

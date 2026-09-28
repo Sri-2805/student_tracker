@@ -24,6 +24,7 @@ def create_app(config_class=Config):
     from app.blueprints.analytics.routes import analytics_bp
     from app.blueprints.parents.routes import parents_bp
     from app.blueprints.admin.routes import admin_bp
+    from app.blueprints.leave_od.routes import leave_od_bp
 
     app.register_blueprint(auth_bp)
     app.register_blueprint(dashboard_bp)
@@ -32,6 +33,7 @@ def create_app(config_class=Config):
     app.register_blueprint(analytics_bp, url_prefix="/analytics")
     app.register_blueprint(parents_bp, url_prefix="/messages")
     app.register_blueprint(admin_bp, url_prefix="/admin")
+    app.register_blueprint(leave_od_bp, url_prefix="/leave-od")
 
     # Make current_user available with role helpers in templates
     from flask_login import current_user

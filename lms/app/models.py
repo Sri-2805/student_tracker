@@ -56,6 +56,24 @@ class Student(db.Model):
     user = db.relationship("User", foreign_keys=[user_id])
     parent_user = db.relationship("User", foreign_keys=[parent_id])
     department = db.relationship("Department")
+    parent_links = db.relationship(
+        "ParentStudentLink",
+        backref="student",
+        cascade="all, delete-orphan",
+        lazy="dynamic",
+    )
+    parents = db.relationship(
+        "User",
+        secondary="parent_student_link",
+        primaryjoin="Student.student_id == ParentStudentLink.student_id",
+        secondaryjoin="User.user_id == ParentStudentLink.parent_user_id",
+        viewonly=True,
+    )
+
+    def has_parent(self, user_id):
+        if self.parent_id == user_id:
+            return True
+        return self.parent_links.filter_by(parent_user_id=user_id).count() > 0
 
 
 class Teacher(db.Model):
@@ -228,3 +246,28 @@ class AssignmentSubmission(db.Model):
 
     assessment = db.relationship("Assessment")
     student = db.relationship("Student")
+
+
+class LeaveODRequest(db.Model):
+    """A student's leave or on-duty request awaiting faculty validation."""
+
+    __tablename__ = "leave_od_requests"
+
+    request_id = db.Column(db.Integer, primary_key=True)
+    student_id = db.Column(db.Integer, db.ForeignKey("students.student_id"), nullable=False)
+    request_type = db.Column(db.Enum("Leave", "OD"), nullable=False)
+    from_date = db.Column(db.Date, nullable=False)
+    to_date = db.Column(db.Date, nullable=False)
+    reason = db.Column(db.Text, nullable=False)
+    status = db.Column(
+        db.Enum("Pending", "Approved", "Rejected"),
+        nullable=False,
+        default="Pending",
+    )
+    faculty_remarks = db.Column(db.String(500))
+    reviewed_by = db.Column(db.Integer, db.ForeignKey("users.user_id"))
+    reviewed_at = db.Column(db.DateTime)
+    submitted_at = db.Column(db.DateTime, default=datetime.utcnow)
+
+    student = db.relationship("Student")
+    reviewer = db.relationship("User", foreign_keys=[reviewed_by])

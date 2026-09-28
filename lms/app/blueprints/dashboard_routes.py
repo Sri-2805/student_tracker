@@ -47,7 +47,10 @@ def index():
         )
 
     elif role == "parent":
-        children = Student.query.filter_by(parent_id=current_user.user_id).all()
+        children = Student.query.filter(
+            (Student.parent_id == current_user.user_id)
+            | Student.parent_links.any(parent_user_id=current_user.user_id)
+        ).all()
         child_data = []
         for child in children:
             child_data.append({

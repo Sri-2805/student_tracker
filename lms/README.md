@@ -6,6 +6,7 @@ A complete Student LMS Tracker web application built with **Python (Flask)** and
 - ✅ Grade entry and management (weighted assessments, auto letter-grades)
 - ✅ Performance analytics & reporting (charts, at-risk student detection)
 - ✅ Parent communication (secure messaging, notifications, announcements)
+- ✅ Student Leave / On-Duty requests with faculty validation
 
 Includes 4 roles: **Admin**, **Teacher**, **Student**, **Parent** — each with its own dashboard.
 
@@ -94,6 +95,7 @@ lms/
 │   │   ├── grades/          # assessments, grade entry, report cards
 │   │   ├── analytics/       # charts, at-risk detection, services.py (shared queries)
 │   │   ├── parents/         # messaging / inbox / compose
+│   │   ├── leave_od/        # student leave/OD requests and faculty validation
 │   │   ├── admin/           # user/course/announcement management
 │   │   └── dashboard_routes.py
 │   ├── templates/           # Jinja2 + Bootstrap 5 templates
@@ -126,6 +128,9 @@ lms/
 - **Parent communication**: `messages` table (threaded by subject, optionally tagged
   to a specific `student_id`) + `notifications` (auto-created on absence, new grade,
   or new message) + `announcements` (broadcast, filterable by target role).
+- **Leave / OD**: students submit dated Leave or On-Duty requests from the portal;
+  faculty validate requests for their department or active courses, with optional remarks.
+  The request history remains visible to the student with Pending, Approved, or Rejected status.
 - Passwords are hashed with Werkzeug's `pbkdf2:sha256`. Sessions via Flask-Login.
   All student/parent/teacher data views are access-controlled by role and ownership
   (a parent can only see their own linked children, a student only themselves, etc).

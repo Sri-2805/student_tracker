@@ -197,7 +197,31 @@ CREATE TABLE notifications (
 ) ENGINE=InnoDB;
 
 -- ----------------------------------------------------------------------------
--- 6. TASKS / DEADLINE TRACKER (supports "My Daily Task List" style widget)
+-- 6. STUDENT LEAVE / ON-DUTY REQUESTS
+-- ----------------------------------------------------------------------------
+
+CREATE TABLE leave_od_requests (
+    request_id       INT AUTO_INCREMENT PRIMARY KEY,
+    student_id       INT NOT NULL,
+    request_type     ENUM('Leave','OD') NOT NULL,
+    from_date        DATE NOT NULL,
+    to_date          DATE NOT NULL,
+    reason           TEXT NOT NULL,
+    status           ENUM('Pending','Approved','Rejected') NOT NULL DEFAULT 'Pending',
+    faculty_remarks  VARCHAR(500),
+    reviewed_by      INT NULL,
+    reviewed_at      DATETIME NULL,
+    submitted_at     DATETIME DEFAULT CURRENT_TIMESTAMP,
+    FOREIGN KEY (student_id) REFERENCES students(student_id) ON DELETE CASCADE,
+    FOREIGN KEY (reviewed_by) REFERENCES users(user_id) ON DELETE SET NULL,
+    CONSTRAINT chk_leave_od_dates CHECK (to_date >= from_date)
+) ENGINE=InnoDB;
+
+CREATE INDEX idx_leave_od_student ON leave_od_requests (student_id, submitted_at);
+CREATE INDEX idx_leave_od_status ON leave_od_requests (status);
+
+-- ----------------------------------------------------------------------------
+-- 7. TASKS / DEADLINE TRACKER (supports "My Daily Task List" style widget)
 -- ----------------------------------------------------------------------------
 
 CREATE TABLE tasks (
@@ -213,7 +237,7 @@ CREATE TABLE tasks (
 ) ENGINE=InnoDB;
 
 -- ----------------------------------------------------------------------------
--- 7. VIEWS FOR ANALYTICS / REPORTING
+-- 8. VIEWS FOR ANALYTICS / REPORTING
 -- ----------------------------------------------------------------------------
 
 -- Per-student, per-course attendance percentage
@@ -258,7 +282,7 @@ GROUP BY s.student_id, u.full_name, s.registration_no
 HAVING avg_attendance < 75 OR avg_grade < 50;
 
 -- ----------------------------------------------------------------------------
--- 8. SEED DATA
+-- 9. SEED DATA
 -- ----------------------------------------------------------------------------
 
 INSERT INTO departments (dept_code, dept_name) VALUES

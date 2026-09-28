@@ -1,0 +1,70 @@
+{% extends "base.html" %}
+{% block title %}Leave &amp; OD Portal{% endblock %}
+{% block content %}
+<div class="d-flex justify-content-between align-items-end flex-wrap gap-3 mb-4">
+  <div>
+    <span class="eyebrow text-success">Student services</span>
+    <h2 class="mb-1 mt-2">Leave &amp; On Duty Portal</h2>
+    <p class="text-muted mb-0">Submit a request and track faculty validation in one place.</p>
+  </div>
+  <span class="badge text-bg-light border"><i class="bi bi-person-badge me-1"></i>{{ student.registration_no }}</span>
+</div>
+
+<div class="row g-4">
+  <div class="col-lg-5">
+    <div class="card">
+      <div class="card-header bg-white fw-semibold"><i class="bi bi-send me-2 text-success"></i>New request</div>
+      <div class="card-body">
+        <form method="POST">
+          <div class="mb-3">
+            <label class="form-label" for="request_type">Request type</label>
+            <select class="form-select" id="request_type" name="request_type" required>
+              <option value="">Select type</option>
+              <option value="Leave">Leave</option>
+              <option value="OD">On Duty (OD)</option>
+            </select>
+          </div>
+          <div class="row g-3 mb-3">
+            <div class="col-6">
+              <label class="form-label" for="from_date">From</label>
+              <input class="form-control" id="from_date" name="from_date" type="date" required>
+            </div>
+            <div class="col-6">
+              <label class="form-label" for="to_date">To</label>
+              <input class="form-control" id="to_date" name="to_date" type="date" required>
+            </div>
+          </div>
+          <div class="mb-3">
+            <label class="form-label" for="reason">Reason / event details</label>
+            <textarea class="form-control" id="reason" name="reason" rows="5" minlength="10" placeholder="Explain the reason or provide OD event details" required></textarea>
+          </div>
+          <button class="btn btn-primary w-100" type="submit"><i class="bi bi-send me-1"></i>Submit for validation</button>
+        </form>
+      </div>
+    </div>
+  </div>
+
+  <div class="col-lg-7">
+    <div class="card">
+      <div class="card-header bg-white fw-semibold"><i class="bi bi-clock-history me-2 text-success"></i>My requests</div>
+      <div class="table-responsive">
+        <table class="table mb-0 align-middle">
+          <thead><tr><th>Type</th><th>Dates</th><th>Reason</th><th>Status</th></tr></thead>
+          <tbody>
+          {% for item in requests %}
+            <tr>
+              <td><span class="badge {{ 'text-bg-info' if item.request_type == 'OD' else 'text-bg-secondary' }}">{{ item.request_type }}</span></td>
+              <td class="text-nowrap">{{ item.from_date.strftime('%d %b %Y') }}<br><small class="text-muted">to {{ item.to_date.strftime('%d %b %Y') }}</small></td>
+              <td><span class="d-inline-block request-reason">{{ item.reason }}</span>{% if item.faculty_remarks %}<small class="d-block text-muted mt-1"><strong>Faculty:</strong> {{ item.faculty_remarks }}</small>{% endif %}</td>
+              <td><span class="progress-pill {{ 'pill-good' if item.status == 'Approved' else 'pill-bad' if item.status == 'Rejected' else 'pill-warn' }}">{{ item.status }}</span></td>
+            </tr>
+          {% else %}
+            <tr><td colspan="4" class="text-muted text-center py-5">No requests submitted yet.</td></tr>
+          {% endfor %}
+          </tbody>
+        </table>
+      </div>
+    </div>
+  </div>
+</div>
+{% endblock %}

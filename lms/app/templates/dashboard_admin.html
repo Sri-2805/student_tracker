@@ -1,6 +1,11 @@
 {% extends "base.html" %}
 {% block title %}Admin Dashboard{% endblock %}
 {% block content %}
+<div class="mb-4">
+  <span class="eyebrow text-success">Institution overview</span>
+  <h2 class="mt-2 mb-1">Good morning, {{ current_user.full_name }}</h2>
+  <p class="text-muted mb-0">A quick pulse check on your learning community.</p>
+</div>
 <div class="row g-3 mb-4">
   <div class="col-md-4">
     <div class="stat-card"><p>Total Students</p><h3>{{ total_students }}</h3></div>
@@ -10,15 +15,15 @@
   </div>
   <div class="col-md-4">
     <div class="stat-card"><p>Quick Links</p>
-      <a href="{{ url_for('admin.new_user') }}" class="btn btn-sm btn-primary me-1 mt-1">+ New User</a>
-      <a href="{{ url_for('admin.courses') }}" class="btn btn-sm btn-outline-primary mt-1">Manage Courses</a>
+      <a href="{{ url_for('admin.new_user') }}" class="btn btn-sm btn-primary me-1 mt-1"><i class="bi bi-person-plus me-1"></i>New User</a>
+      <a href="{{ url_for('admin.courses') }}" class="btn btn-sm btn-outline-primary mt-1"><i class="bi bi-book me-1"></i>Manage Courses</a>
     </div>
   </div>
 </div>
 
 <div class="card">
   <div class="card-header bg-white fw-semibold d-flex justify-content-between">
-    Recent Announcements
+    <span><i class="bi bi-megaphone me-2 text-danger"></i>Recent Announcements</span>
     <a href="{{ url_for('admin.announcements') }}" class="btn btn-sm btn-primary">Post New</a>
   </div>
   <ul class="list-group list-group-flush">

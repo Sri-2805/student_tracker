@@ -1,0 +1,45 @@
+{% extends "base.html" %}
+{% block title %}Leave &amp; OD Validation{% endblock %}
+{% block content %}
+<div class="d-flex justify-content-between align-items-end flex-wrap gap-3 mb-4">
+  <div>
+    <span class="eyebrow text-success">Faculty workspace</span>
+    <h2 class="mb-1 mt-2">Leave &amp; OD Validation</h2>
+    <p class="text-muted mb-0">Review requests from students in your department or active courses.</p>
+  </div>
+  <div class="stat-card py-2 px-3 d-flex align-items-center gap-2"><span class="text-muted small">Pending</span><strong class="fs-4">{{ pending_count }}</strong></div>
+</div>
+
+<div class="card">
+  <div class="card-header bg-white fw-semibold"><i class="bi bi-person-check me-2 text-success"></i>Requests awaiting validation</div>
+  <div class="table-responsive">
+    <table class="table mb-0 align-middle">
+      <thead><tr><th>Student</th><th>Type &amp; dates</th><th>Reason</th><th>Status</th><th>Action</th></tr></thead>
+      <tbody>
+      {% for item in requests %}
+        <tr>
+          <td><strong>{{ item.student.user.full_name }}</strong><small class="d-block text-muted">{{ item.student.registration_no }}</small></td>
+          <td><span class="badge {{ 'text-bg-info' if item.request_type == 'OD' else 'text-bg-secondary' }}">{{ item.request_type }}</span><small class="d-block mt-1">{{ item.from_date.strftime('%d %b %Y') }} – {{ item.to_date.strftime('%d %b %Y') }}</small></td>
+          <td class="request-reason">{{ item.reason }}</td>
+          <td><span class="progress-pill {{ 'pill-good' if item.status == 'Approved' else 'pill-bad' if item.status == 'Rejected' else 'pill-warn' }}">{{ item.status }}</span>{% if item.faculty_remarks %}<small class="d-block text-muted mt-1">{{ item.faculty_remarks }}</small>{% endif %}</td>
+          <td>
+            {% if item.status == 'Pending' %}
+            <form method="POST" class="review-form">
+              <input type="hidden" name="request_id" value="{{ item.request_id }}">
+              <input class="form-control form-control-sm mb-2" name="faculty_remarks" placeholder="Optional note; required to reject">
+              <div class="d-flex gap-1">
+                <button class="btn btn-sm btn-success" name="decision" value="Approved" type="submit"><i class="bi bi-check2 me-1"></i>Approve</button>
+                <button class="btn btn-sm btn-outline-danger" name="decision" value="Rejected" type="submit"><i class="bi bi-x me-1"></i>Reject</button>
+              </div>
+            </form>
+            {% else %}<span class="text-muted small">Validated {{ item.reviewed_at.strftime('%d %b %Y') if item.reviewed_at else '' }}</span>{% endif %}
+          </td>
+        </tr>
+      {% else %}
+        <tr><td colspan="5" class="text-muted text-center py-5">No leave or OD requests are available.</td></tr>
+      {% endfor %}
+      </tbody>
+    </table>
+  </div>
+</div>
+{% endblock %}

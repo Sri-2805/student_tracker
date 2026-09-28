@@ -4,18 +4,18 @@
 
 <div class="info-card">
   <div class="d-flex justify-content-between flex-wrap">
-    <h3 class="mb-1">{{ student.user.full_name.upper() if student else 'STUDENT' }}</h3>
+    <div><span class="eyebrow text-success">Student overview</span><h3 class="mb-1 mt-2">{{ student.user.full_name.upper() if student else 'STUDENT' }}</h3></div>
     <div>
-      <span class="badge text-bg-light border">🎓 Semester {{ student.semester }}</span>
+      <span class="badge text-bg-light border"><i class="bi bi-mortarboard me-1"></i> Semester {{ student.semester }}</span>
       <span class="badge text-bg-light border">{{ student.program }}</span>
     </div>
   </div>
-  <p class="mb-1">🆔 Registration No.: <strong>{{ student.registration_no }}</strong></p>
-  <p class="mb-1">🏢 Department: <strong>{{ student.department.dept_name if student.department else '-' }}</strong></p>
+  <p class="mb-1"><i class="bi bi-fingerprint me-1"></i> Registration No.: <strong>{{ student.registration_no }}</strong></p>
+  <p class="mb-1"><i class="bi bi-building me-1"></i> Department: <strong>{{ student.department.dept_name if student.department else '-' }}</strong></p>
   <div class="d-flex gap-4 mt-2 flex-wrap">
-    <span>📅 Academic Year: <strong>{{ student.academic_year }}</strong></span>
-    <span>🎯 Total Credits: <strong>{{ student.total_credits }}</strong></span>
-    <span>🏆 Earned Credits: <strong>{{ student.earned_credits or 'NA' }}</strong></span>
+    <span><i class="bi bi-calendar3 me-1"></i> Academic Year: <strong>{{ student.academic_year }}</strong></span>
+    <span><i class="bi bi-bullseye me-1"></i> Total Credits: <strong>{{ student.total_credits }}</strong></span>
+    <span><i class="bi bi-trophy me-1"></i> Earned Credits: <strong>{{ student.earned_credits or 'NA' }}</strong></span>
   </div>
 </div>
 
@@ -51,7 +51,7 @@
 <div class="row g-3">
   <div class="col-lg-8">
     <div class="card">
-      <div class="card-header bg-white fw-semibold">Your Courses — Attendance & Grade Snapshot</div>
+      <div class="card-header bg-white fw-semibold"><i class="bi bi-journal-bookmark me-2 text-success"></i>Your Courses <span class="text-muted fw-normal">/ attendance & grade snapshot</span></div>
       <div class="table-responsive">
         <table class="table mb-0">
           <thead><tr><th>Course</th><th>Attendance</th><th>Grade</th><th></th></tr></thead>
@@ -85,7 +85,14 @@
 
   <div class="col-lg-4">
     <div class="card mb-3">
-      <div class="card-header bg-white fw-semibold">Deadline Tracker</div>
+      <div class="card-header bg-white fw-semibold"><i class="bi bi-calendar2-plus me-2 text-success"></i>Leave &amp; On Duty</div>
+      <div class="card-body">
+        <p class="text-muted small">Request leave or on-duty permission and follow faculty validation.</p>
+        <a href="{{ url_for('leave_od.student_portal') }}" class="btn btn-primary btn-sm"><i class="bi bi-arrow-right-circle me-1"></i>Open portal</a>
+      </div>
+    </div>
+    <div class="card mb-3">
+      <div class="card-header bg-white fw-semibold"><i class="bi bi-clock-history me-2 text-warning"></i>Deadline Tracker</div>
       <ul class="list-group list-group-flush">
         {% for t in upcoming_tasks %}
         <li class="list-group-item d-flex justify-content-between">
@@ -99,7 +106,7 @@
     </div>
 
     <div class="card">
-      <div class="card-header bg-white fw-semibold">Announcements</div>
+      <div class="card-header bg-white fw-semibold"><i class="bi bi-megaphone me-2 text-danger"></i>Announcements</div>
       <ul class="list-group list-group-flush">
         {% for ann in announcements %}
         <li class="list-group-item">

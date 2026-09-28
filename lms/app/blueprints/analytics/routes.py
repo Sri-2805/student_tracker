@@ -19,7 +19,7 @@ def student_analytics(student_id):
 
     if current_user.role == "student" and student.user_id != current_user.user_id:
         abort(403)
-    if current_user.role == "parent" and student.parent_id != current_user.user_id:
+    if current_user.role == "parent" and not student.has_parent(current_user.user_id):
         abort(403)
 
     attendance = get_attendance_summary_for_student(student_id)

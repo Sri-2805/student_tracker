@@ -26,7 +26,10 @@ def inbox():
 def compose():
     # Build list of valid recipients depending on role
     if current_user.role == "parent":
-        children = Student.query.filter_by(parent_id=current_user.user_id).all()
+        children = Student.query.filter(
+            (Student.parent_id == current_user.user_id)
+            | Student.parent_links.any(parent_user_id=current_user.user_id)
+        ).all()
         recipients = User.query.filter(User.role.in_(["teacher", "admin"])).all()
     elif current_user.role == "teacher":
         children = []

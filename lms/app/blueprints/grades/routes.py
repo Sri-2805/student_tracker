@@ -147,7 +147,7 @@ def report(student_id):
 
     if current_user.role == "student" and student.user_id != current_user.user_id:
         abort(403)
-    if current_user.role == "parent" and student.parent_id != current_user.user_id:
+    if current_user.role == "parent" and not student.has_parent(current_user.user_id):
         abort(403)
 
     summary = get_grade_summary_for_student(student_id)
@@ -160,7 +160,7 @@ def download_report(student_id):
     student = Student.query.get_or_404(student_id)
     if current_user.role == "student" and student.user_id != current_user.user_id:
         abort(403)
-    if current_user.role == "parent" and student.parent_id != current_user.user_id:
+    if current_user.role == "parent" and not student.has_parent(current_user.user_id):
         abort(403)
 
     summary = get_grade_summary_for_student(student_id)

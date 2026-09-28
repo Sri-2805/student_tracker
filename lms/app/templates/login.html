@@ -2,9 +2,23 @@
 {% block title %}Login - Student LMS Tracker{% endblock %}
 {% block auth_content %}
 <div class="auth-wrapper">
-  <div class="auth-card">
-    <h2>Student LMS Tracker</h2>
-    <p class="subtitle">Sign in to your account</p>
+  <div class="auth-layout">
+    <section class="auth-intro">
+      <div class="auth-brand"><span class="brand-mark"><i class="bi bi-mortarboard-fill"></i></span> Student LMS</div>
+      <div class="intro-copy">
+        <span class="eyebrow">Your academic command center</span>
+        <h1>Make progress<br><em>visible.</em></h1>
+        <p>One clear view for attendance, grades, assignments, and the people helping you move forward.</p>
+      </div>
+      <div class="intro-footer"><span class="footer-rule"></span><span>Learn with intention</span></div>
+    </section>
+
+    <section class="auth-card">
+      <div class="auth-card-heading">
+        <span class="eyebrow">Welcome back</span>
+        <h2>Sign in to continue</h2>
+        <p class="subtitle">Pick up where your learning story left off.</p>
+      </div>
 
     {% with messages = get_flashed_messages(with_categories=true) %}
       {% if messages %}
@@ -15,25 +29,26 @@
     {% endwith %}
 
     <form method="POST">
-      <div class="mb-3">
+      <div class="mb-3 form-field">
         <label class="form-label">Username</label>
-        <input type="text" name="username" class="form-control" required autofocus>
+        <div class="input-with-icon"><i class="bi bi-person"></i><input type="text" name="username" class="form-control" placeholder="Enter your username" required autofocus></div>
       </div>
-      <div class="mb-3">
+      <div class="mb-3 form-field">
         <label class="form-label">Password</label>
-        <input type="password" name="password" class="form-control" required>
+        <div class="input-with-icon"><i class="bi bi-lock"></i><input type="password" name="password" class="form-control" placeholder="Enter your password" required></div>
       </div>
-      <button type="submit" class="btn btn-primary w-100">Login</button>
+      <button type="submit" class="btn btn-primary w-100 login-button">Enter workspace <i class="bi bi-arrow-up-right"></i></button>
     </form>
-    <div class="mt-3 text-muted" style="font-size:.9rem;">
-      <p><strong>Demo logins:</strong></p>
+    <div class="demo-access">
+      <p class="demo-title"><i class="bi bi-stars"></i> Demo access</p>
       <ul class="mb-0 ps-3">
-        <li><strong>Admin</strong>: admin / adminpass</li>
-        <li><strong>Teacher</strong>: teacher1 / password123</li>
-        <li><strong>Student</strong>: student1 / password123</li>
-        <li><strong>Parent</strong>: parent1 / password123</li>
+        <li><strong>Admin</strong> <span>admin / adminpass</span></li>
+        <li><strong>Teacher</strong> <span>teacher1 / password123</span></li>
+        <li><strong>Student</strong> <span>student1 / password123</span></li>
+        <li><strong>Parent</strong> <span>parent1 / password123</span></li>
       </ul>
     </div>
+    </section>
   </div>
 </div>
 {% endblock %}
